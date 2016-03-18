@@ -1,3 +1,4 @@
+/// MySQL repository layer for Corsac projects.
 library corsac_mysql;
 
 import 'dart:async';

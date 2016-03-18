@@ -17,7 +17,9 @@ class MySQL {
 
   factory MySQL(
       String host, port, String username, String password, String db) {
-    var key = (db == null) ? '${host}:${port}' : '${host}:${port}/${db}';
+    var key = (db == null || db.isEmpty)
+        ? '${host}:${port}'
+        : '${host}:${port}/${db}';
     var portAsInt = (port is int) ? port : int.parse(port);
 
     if (!_instancesByHostAndDb.containsKey(key)) {
@@ -26,6 +28,13 @@ class MySQL {
     }
 
     return _instancesByHostAndDb[key];
+  }
+
+  factory MySQL.fromUri(String uri) {
+    var _ = Uri.parse(uri);
+    var credentials = _.userInfo.split(':');
+    var db = _.path.replaceFirst('/', '');
+    return new MySQL(_.host, _.port, credentials.first, credentials.last, db);
   }
 
   ConnectionPool get connectionPool {

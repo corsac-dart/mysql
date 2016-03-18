@@ -10,8 +10,12 @@ environment:
 dependencies:
   humps:
     git: https://github.com/pulyaevskiy/dart-humps.git
+  corsac_kernel:
+    git: https://github.com/corsac-dart/kernel.git
   corsac_dto:
     git: https://github.com/corsac-dart/dto.git
+  corsac_console:
+    git: https://github.com/corsac-dart/console.git
   corsac_stateless:
     git:
       url: https://github.com/corsac-dart/stateless.git
