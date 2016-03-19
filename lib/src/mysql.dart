@@ -33,8 +33,11 @@ class MySQL {
   factory MySQL.fromUri(String uri) {
     var _ = Uri.parse(uri);
     var credentials = _.userInfo.split(':');
+    var username = credentials.isNotEmpty ? credentials.removeAt(0) : null;
+    var password = credentials.isNotEmpty ? credentials.first : null;
     var db = _.path.replaceFirst('/', '');
-    return new MySQL(_.host, _.port, credentials.first, credentials.last, db);
+
+    return new MySQL(_.host, _.port, username, password, db);
   }
 
   ConnectionPool get connectionPool {
