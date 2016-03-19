@@ -27,8 +27,11 @@ class MySQLMigrateCommand extends Command {
 
   @override
   Future run() async {
+    stdout.writeln('MySQL: there are ${migrations.length} to execute.');
     for (var migration in migrations) {
+      stdout.writeln('MySQL: executing ${migration.runtimeType}.');
       await migration.migrate();
     }
+    stdout.writeln('MySQL: All migrations executed successfully.');
   }
 }

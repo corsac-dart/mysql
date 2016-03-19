@@ -1,10 +1,11 @@
 /// MySQL bindings for Corsac projects.
 library corsac_mysql.base;
 
-import 'package:corsac_kernel/corsac_kernel.dart';
-import 'package:corsac_mysql/corsac_mysql.dart';
-import 'package:corsac_console/corsac_console.dart';
 import 'dart:async';
+import 'dart:io';
+
+import 'package:corsac_console/corsac_console.dart';
+import 'package:corsac_kernel/corsac_kernel.dart';
 
 part 'src/base/console_commands.dart';
 
