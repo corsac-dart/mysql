@@ -138,8 +138,8 @@ class SQLQuery {
       limit = " LIMIT " + limits.join(', ');
     }
 
-    var sql =
-        "SELECT * FROM `${tableName}` WHERE " + where.join(' AND ') + limit;
+    var whereSql = where.isNotEmpty ? 'WHERE ' + where.join(' AND ') : '';
+    var sql = "SELECT * FROM `${tableName}` $whereSql " + limit;
 
     return new SQLQuery._(sql, parameters);
   }
