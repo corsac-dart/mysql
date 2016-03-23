@@ -82,5 +82,14 @@ void main() {
       expect(result.first.fullName, 'Burt Macklin');
       expect(result.last.fullName, 'Deadpool');
     });
+
+    test('it can count entities', () async {
+      var createdAt = new DateTime.now();
+      await repo.put(new User(1, 'Burt Macklin', createdAt));
+      await repo.put(new User(2, 'Johnny Karate', createdAt));
+      await repo.put(new User(3, 'Deadpool', createdAt));
+      var result = await repo.count();
+      expect(result, 3);
+    });
   });
 }

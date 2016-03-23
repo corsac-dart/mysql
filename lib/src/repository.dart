@@ -97,7 +97,7 @@ class MySQLRepository<T> implements Repository<T> {
     criteria.conditions.forEach((c) {
       c.key = humps.decamelize(c.key);
     });
-    return new SQLQuery.build(criteria, tableName);
+    return new SQLQuery.buildSelect(criteria, tableName);
   }
 
   @override
@@ -116,30 +116,55 @@ class MySQLRepository<T> implements Repository<T> {
     // TODO: implement batchPut
     throw new StateError('MySQLRepository.batchGet() is not implemented yet.');
   }
+
+  @override
+  Future<int> count([Criteria<T> criteria]) {
+    var query = new SQLQuery.buildSelect(criteria, tableName, count: true);
+    return mysql.connectionPool
+        .prepare(query.sql)
+        .then((prepared) => prepared.execute(query.parameters))
+        .then((results) => results.first)
+        .then((row) => row.first);
+  }
 }
 
+/// SQL query builder.
+///
+/// Current limitations:
+///
+///  * no joins
+///  * only AND for conditions in `WHERE` clause
 class SQLQuery {
   final String sql;
   final List parameters;
   SQLQuery._(this.sql, this.parameters);
 
-  factory SQLQuery.build(Criteria criteria, String tableName) {
+  factory SQLQuery.buildSelect(Criteria criteria, String tableName,
+      {bool count: false}) {
     var where = [];
     var parameters = [];
-    for (var c in criteria.conditions) {
-      where.add("${c.key} ${c.predicate} ?");
-      parameters.add(c.value);
-    }
     var limit = '';
-    if (criteria.skip != null || criteria.take != null) {
-      var limits = [];
-      if (criteria.skip != null) limits.add(criteria.skip);
-      if (criteria.take != null) limits.add(criteria.take);
-      limit = " LIMIT " + limits.join(', ');
+    if (criteria is Criteria) {
+      for (var c in criteria.conditions) {
+        where.add("${c.key} ${c.predicate} ?");
+        parameters.add(c.value);
+      }
+
+      if (criteria.skip != null || criteria.take != null) {
+        var limits = [];
+        if (criteria.skip != null) limits.add(criteria.skip);
+        if (criteria.take != null) limits.add(criteria.take);
+        limit = " LIMIT " + limits.join(', ');
+      }
     }
 
     var whereSql = where.isNotEmpty ? 'WHERE ' + where.join(' AND ') : '';
-    var sql = "SELECT * FROM `${tableName}` $whereSql " + limit;
+    var sql = '';
+    if (count) {
+      sql = "SELECT COUNT(*) FROM `${tableName}` $whereSql";
+    } else {
+      sql = "SELECT * FROM `${tableName}` $whereSql " + limit;
+    }
 
     return new SQLQuery._(sql, parameters);
   }
