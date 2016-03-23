@@ -1,6 +1,6 @@
 name: corsac_mysql
 version: 0.1.0-dev
-description: MySQL repositories and utilities for corsac_stateless
+description: MySQL repositories and utilities for Corsac projects
 homepage: https://github.com/corsac-dart/mysql
 author: Anatoly Pulyaevskiy <anatoly.pulyaevskiy@gmail.com>
 
@@ -12,8 +12,8 @@ dependencies:
     git: https://github.com/pulyaevskiy/dart-humps.git
   corsac_kernel:
     git: https://github.com/corsac-dart/kernel.git
-  corsac_dto:
-    git: https://github.com/corsac-dart/dto.git
+  corsac_state:
+    git: https://github.com/corsac-dart/state.git
   corsac_console:
     git: https://github.com/corsac-dart/console.git
   corsac_stateless:

@@ -23,7 +23,7 @@ void main() {
           'CREATE DATABASE IF NOT EXISTS mysql_test DEFAULT CHARACTER SET utf8;');
       await mysql.query('USE mysql_test;');
       await mysql.query(
-          'CREATE TABLE IF NOT EXISTS users (id INT, full_name VARCHAR(100), created_at VARCHAR(32), UNIQUE KEY `id` (`id`)) ENGINE=innodb;');
+          'CREATE TABLE IF NOT EXISTS users (id INT, full_name VARCHAR(100), created_at DATETIME, UNIQUE KEY `id` (`id`)) ENGINE=innodb;');
     });
 
     tearDown(() async {
@@ -32,7 +32,7 @@ void main() {
     });
 
     test('it can store entities', () async {
-      var createdAt = new DateTime.now();
+      var createdAt = new DateTime(2016, 1, 3, 2, 44, 12);
       await repo.put(new User(1, 'Burt Macklin', createdAt));
       var user = await repo.get(1);
       expect(user, new isInstanceOf<User>());

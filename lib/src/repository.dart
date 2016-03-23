@@ -33,7 +33,7 @@ class MySQLRepository<T> implements Repository<T> {
         .then((record) {
       if (record is Map) {
         var state = recordToStateObject(record);
-        return DTO.hydrate(T, state);
+        return State.restore(T, state);
       } else {
         return null;
       }
@@ -42,7 +42,7 @@ class MySQLRepository<T> implements Repository<T> {
 
   @override
   Future put(T entity) {
-    var record = stateObjectToRecord(DTO.extract(entity));
+    var record = stateObjectToRecord(State.snapshot(entity));
     return mysql.put(tableName, record);
   }
 
@@ -73,7 +73,7 @@ class MySQLRepository<T> implements Repository<T> {
       return results.map((row) {
         var record = mysql.rowToMap(row, results.fields);
         var state = recordToStateObject(record);
-        return DTO.hydrate(T, state);
+        return State.restore(T, state);
       });
     }).then((stream) {
       return controller.addStream(stream);
@@ -107,7 +107,7 @@ class MySQLRepository<T> implements Repository<T> {
         .batchGet(tableName, ids, column: humps.decamelize(fieldName))
         .map((record) {
       var state = recordToStateObject(record);
-      return DTO.hydrate(T, state);
+      return State.restore(T, state);
     });
   }
 
