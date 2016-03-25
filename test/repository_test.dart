@@ -23,7 +23,7 @@ void main() {
           'CREATE DATABASE IF NOT EXISTS mysql_test DEFAULT CHARACTER SET utf8;');
       await mysql.query('USE mysql_test;');
       await mysql.query(
-          'CREATE TABLE IF NOT EXISTS users (id INT, full_name VARCHAR(100), created_at DATETIME, UNIQUE KEY `id` (`id`)) ENGINE=innodb;');
+          'CREATE TABLE IF NOT EXISTS users (id INT, full_name VARCHAR(100), created_at VARCHAR(100), UNIQUE KEY `id` (`id`)) ENGINE=innodb;');
     });
 
     tearDown(() async {

@@ -5,6 +5,9 @@ class MySQLRepository<T> implements Repository<T> {
   final MySQL mysql;
   final String tableName;
 
+  /// Configures MySQL specific date format.
+  final StateFormat stateFormat = const StateFormat('yyyy-MM-dd HH:mm:ss');
+
   MySQLRepository(this.mysql, this.tableName);
 
   String getIdentityFieldName() {
@@ -42,7 +45,8 @@ class MySQLRepository<T> implements Repository<T> {
 
   @override
   Future put(T entity) {
-    var record = stateObjectToRecord(State.snapshot(entity));
+    var record =
+        stateObjectToRecord(State.snapshot(entity, format: stateFormat));
     return mysql.put(tableName, record);
   }
 
