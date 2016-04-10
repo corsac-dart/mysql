@@ -8,7 +8,7 @@ void main() {
     MySQL mysql;
 
     setUp(() async {
-      mysql = new MySQL('localhost', 3306, 'root', null, null);
+      mysql = new MySQL('127.0.0.1', 3306, 'root', null, null);
       await mysql.query(
           'CREATE DATABASE IF NOT EXISTS mysql_test DEFAULT CHARACTER SET utf8;');
       await mysql.query('USE mysql_test;');

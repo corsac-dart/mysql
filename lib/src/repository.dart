@@ -68,9 +68,9 @@ class MySQLRepository<T> implements Repository<T> {
   }
 
   @override
-  Stream<T> find(Criteria criteria) {
+  Stream<T> find(Filter<T> filter) {
     var controller = new StreamController<T>();
-    var q = buildQuery(criteria);
+    var q = buildQuery(filter);
     mysql.connectionPool.prepare(q.sql).then((preparedQuery) {
       return preparedQuery.execute(q.parameters);
     }).then((results) {
@@ -88,20 +88,20 @@ class MySQLRepository<T> implements Repository<T> {
   }
 
   @override
-  Future<T> findOne(Criteria criteria) {
-    criteria.skip = null;
-    criteria.take = 1;
+  Future<T> findOne(Filter<T> filter) {
+    filter.skip = null;
+    filter.take = 1;
 
-    return find(criteria)
+    return find(filter)
         .first
         .catchError((error) => null, test: (error) => error is StateError);
   }
 
-  SQLQuery buildQuery(Criteria criteria) {
-    criteria.conditions.forEach((c) {
+  SQLQuery buildQuery(Filter<T> filter) {
+    filter.conditions.forEach((c) {
       c.key = humps.decamelize(c.key);
     });
-    return new SQLQuery.buildSelect(criteria, tableName);
+    return new SQLQuery.buildSelect(filter, tableName);
   }
 
   @override
@@ -122,8 +122,8 @@ class MySQLRepository<T> implements Repository<T> {
   }
 
   @override
-  Future<int> count([Criteria<T> criteria]) {
-    var query = new SQLQuery.buildSelect(criteria, tableName, count: true);
+  Future<int> count([Filter<T> filter]) {
+    var query = new SQLQuery.buildSelect(filter, tableName, count: true);
     return mysql.connectionPool
         .prepare(query.sql)
         .then((prepared) => prepared.execute(query.parameters))
@@ -143,21 +143,21 @@ class SQLQuery {
   final List parameters;
   SQLQuery._(this.sql, this.parameters);
 
-  factory SQLQuery.buildSelect(Criteria criteria, String tableName,
+  factory SQLQuery.buildSelect(Filter filter, String tableName,
       {bool count: false}) {
     var where = [];
     var parameters = [];
     var limit = '';
-    if (criteria is Criteria) {
-      for (var c in criteria.conditions) {
+    if (filter is Filter) {
+      for (var c in filter.conditions) {
         where.add("${c.key} ${c.predicate} ?");
         parameters.add(c.value);
       }
 
-      if (criteria.skip != null || criteria.take != null) {
+      if (filter.skip != null || filter.take != null) {
         var limits = [];
-        if (criteria.skip != null) limits.add(criteria.skip);
-        if (criteria.take != null) limits.add(criteria.take);
+        if (filter.skip != null) limits.add(filter.skip);
+        if (filter.take != null) limits.add(filter.take);
         limit = " LIMIT " + limits.join(', ');
       }
     }

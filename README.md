@@ -1,3 +1,3 @@
-# Corsac MySQL
+# Corsac MySQL DAL
 
-__Experimental__ MySQL repositories and utilities for `corsac_stateless`.
+Generic iImplementation MySQL repository for `corsac_dal`.

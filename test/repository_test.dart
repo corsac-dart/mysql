@@ -17,7 +17,7 @@ void main() {
     MySQLRepository<User> repo;
 
     setUp(() async {
-      mysql = new MySQL('localhost', 3306, 'root', null, null);
+      mysql = new MySQL('127.0.0.1', 3306, 'root', null, null);
       repo = new MySQLRepository<User>(mysql, 'users');
       await mysql.query(
           'CREATE DATABASE IF NOT EXISTS mysql_test DEFAULT CHARACTER SET utf8;');
@@ -46,9 +46,9 @@ void main() {
       await repo.put(new User(1, 'Burt Macklin', createdAt));
       await repo.put(new User(2, 'Johnny Karate', createdAt));
       await repo.put(new User(3, 'Deadpool', createdAt));
-      var criteria = new Criteria<User>();
-      criteria.where((u) => u.fullName == 'Deadpool');
-      var result = await repo.find(criteria).toList();
+      var filter = new Filter<User>();
+      filter.where((u) => u.fullName == 'Deadpool');
+      var result = await repo.find(filter).toList();
       expect(result, hasLength(1));
       expect(result.first.fullName, 'Deadpool');
     });
@@ -58,17 +58,17 @@ void main() {
       await repo.put(new User(1, 'Burt Macklin', createdAt));
       await repo.put(new User(2, 'Johnny Karate', createdAt));
       await repo.put(new User(3, 'Deadpool', createdAt));
-      var criteria = new Criteria<User>();
-      criteria.where((u) => u.fullName == 'Deadpool');
-      var result = await repo.findOne(criteria);
+      var filter = new Filter<User>();
+      filter.where((u) => u.fullName == 'Deadpool');
+      var result = await repo.findOne(filter);
       expect(result, new isInstanceOf<User>());
       expect(result.fullName, 'Deadpool');
     });
 
     test('findOne returns null if not found', () async {
-      var criteria = new Criteria<User>();
-      criteria.where((u) => u.fullName == 'Green Lantern');
-      var result = await repo.findOne(criteria);
+      var filter = new Filter<User>();
+      filter.where((u) => u.fullName == 'Green Lantern');
+      var result = await repo.findOne(filter);
       expect(result, isNull);
     });
 
